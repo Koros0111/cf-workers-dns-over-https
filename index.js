@@ -4,23 +4,27 @@ addEventListener('fetch', function(event) {
     event.respondWith(response)
 })
 
-const doh = 'https://security.cloudflare-dns.com/dns-query'
-const dohjson = 'https://security.cloudflare-dns.com/dns-query'
+// request path. Please modify this path to prevent everyone from using this worker.
+const endpointPath = '/dns-query';
+const doh = 'https://cloudflare-dns.com/dns-query'
+const dohjson = 'https://cloudflare-dns.com/dns-query'
 const contype = 'application/dns-message'
 const jstontype = 'application/dns-json'
 
 async function handleRequest(request) {
-    
+    const clientUrl = new URL(request.url);
     const { method, headers, url } = request
     const searchParams = new URL(url).searchParams
-    if (method == 'GET' && searchParams.has('dns')) {
+	if (clientUrl.pathname != endpointPath) {
+        return new Response('Not Found. HTTP 404.', { status: 404 });
+    } else if (method == 'GET' && searchParams.has('dns')) {
         return await fetch(doh + '?dns=' + searchParams.get('dns'), {
             method: 'GET',
             headers: {
                 'Accept': contype,
             }
         });
-    } else if (method == 'POST' && headers.get('content-type')==contype) {
+    } else if (method == 'POST' && headers.get('content-type') == contype) {
         return await fetch(doh, {
             method: 'POST',
             headers: {
@@ -29,7 +33,7 @@ async function handleRequest(request) {
             },
             body: await request.arrayBuffer()
         });
-    } else if (method== 'GET' && headers.get('Accept')==jstontype) {
+    } else if (method== 'GET' && headers.get('Accept') == jstontype) {
         const search = new URL(url).search
          return await fetch(dohjson + search, {
             method: 'GET',
