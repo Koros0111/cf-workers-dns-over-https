@@ -8,10 +8,10 @@ addEventListener('fetch', function(event) {
 const endpointPath = '/dns-query';
 
 // you can replace below server with any other DoH servers.
-const doh = 'https://cloudflare-dns.com/dns-query'
+const doh = 'https://dns.google/dns-query'
 
 // NOTE: below server is in JSON format. For example Google DoH JSON is https://dns.google/resolve (it's not always dns-query).
-const dohjson = 'https://cloudflare-dns.com/dns-query'
+const dohjson = 'https://dns.google/resolve'
 
 const contype = 'application/dns-message'
 const jstontype = 'application/dns-json'
